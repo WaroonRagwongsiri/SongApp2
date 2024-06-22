@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "837489142544",
+    "project_id": "songapp2-45dcc",
+    "storage_bucket": "songapp2-45dcc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:837489142544:android:cc8961781a0baa82095395",
+        "android_client_info": {
+          "package_name": "com.example.songapp2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwVQrUC2ogZ8_MZHxTrXOjHH3r8Rqfirc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

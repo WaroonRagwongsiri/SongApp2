@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:songapp2/auth.dart';
 import 'package:songapp2/pages/home_page.dart';
 import 'package:songapp2/pages/login_register_page.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -22,15 +29,39 @@ class MyApp extends StatelessWidget {
             name: "home",
             builder: (context, state) => const HomePage(),
           ),
-        ],builder: (context, state, child) => const Placeholder(),
+          GoRoute(
+            path: "/search",
+            name: "search",
+            builder: (context, state) => const Placeholder(),
+          ),
+          GoRoute(
+            path: "/library",
+            name: "library",
+            builder: (context, state) => const Placeholder(),
+          ),
+          GoRoute(
+            path: "/profile",
+            name: "profile",
+            builder: (context, state) => const Placeholder(),
+          ),
+        ],
+        builder: (context, state, child) => const Placeholder(),
       ),
     ]);
 
-    return StreamBuilder(stream: Auth().authStateChange, builder: (context,snapshot){
-      if(snapshot.hasData){
-        return MaterialApp.router(routerConfig: _router,theme: ThemeData.dark(),);
-      }
-      return const LoginRegisterPage();
-    });
+    return StreamBuilder(
+        stream: Auth().authStateChange,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return MaterialApp.router(
+              routerConfig: _router,
+              theme: ThemeData.dark(),
+            );
+          }
+          return MaterialApp(
+              home: const LoginRegisterPage(),
+              theme: ThemeData.dark(),
+            );
+        });
   }
 }
