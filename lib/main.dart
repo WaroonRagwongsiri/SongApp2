@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _router = GoRouter(routes: [
+    final router = GoRouter(routes: [
       ShellRoute(
         routes: [
           GoRoute(
@@ -54,12 +54,12 @@ class MyApp extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return MaterialApp.router(
-              routerConfig: _router,
+              routerConfig: router,
               theme: ThemeData.dark(),
             );
           }
           return MaterialApp(
-              home: const LoginRegisterPage(),
+              home: const LoginPage(),
               theme: ThemeData.dark(),
             );
         });
