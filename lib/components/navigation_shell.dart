@@ -1,0 +1,84 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+class NavigationShell extends StatefulWidget {
+  final Widget child;
+
+  const NavigationShell({super.key, required this.child});
+
+  @override
+  State<NavigationShell> createState() => _NavigationShellState();
+}
+
+class _NavigationShellState extends State<NavigationShell> {
+  int _currentIndex = 0;
+
+  void onTap(index) {
+    setState(() {
+      _currentIndex = index;
+    });
+
+    switch (index) {
+      case (0):
+        GoRouter.of(context).go('/');
+        break;
+      case (1):
+        GoRouter.of(context).go('/search');
+        break;
+      case (2):
+        GoRouter.of(context).go('/library');
+        break;
+      case (3):
+        GoRouter.of(context).go('/profile');
+        break;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: widget.child,
+      bottomNavigationBar: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+            colors: [Colors.black, Colors.black87],
+          ),
+        ),
+        child: BottomNavigationBar(
+          //Style
+          backgroundColor: Colors.transparent,
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.white70,
+          showUnselectedLabels: true,
+          //
+          currentIndex: _currentIndex,
+          onTap: (value) => onTap(value),
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home_outlined),
+              activeIcon: Icon(Icons.home),
+              label: "Home",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.search_outlined),
+              activeIcon: Icon(Icons.saved_search),
+              label: "Search",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.library_music_outlined),
+              activeIcon: Icon(Icons.library_music),
+              label: "Library",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person_outline),
+              activeIcon: Icon(Icons.person),
+              label: "Profile",
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

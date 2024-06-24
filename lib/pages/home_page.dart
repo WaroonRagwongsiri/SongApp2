@@ -20,27 +20,27 @@ class _HomePageState extends State<HomePage> {
           FutureBuilder(
               future: SongService().getAllSong(),
               builder: (context, snapshot) {
-                return ListView.builder(itemBuilder: (context, index) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator();
-                  }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                }
 
-                  if (snapshot.hasError) {
-                    return const Text("Error occur");
-                  }
+                if (snapshot.hasError) {
+                  return const Text("Error occur");
+                }
 
-                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Text("No song available");
-                  }
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Text("No song available");
+                }
 
-                  List<DocumentReference> listSongRef = snapshot.data!;
+                List<DocumentReference> listSongRef = snapshot.data!;
 
-                  return ListView.builder(
+                return Expanded(
+                  child: ListView.builder(
                       itemCount: listSongRef.length,
                       itemBuilder: (context, index) {
                         return SongTile(songRef: listSongRef[index]);
-                      });
-                });
+                      }),
+                );
               }),
         ],
       ),
