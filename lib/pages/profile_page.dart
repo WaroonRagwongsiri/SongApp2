@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:songapp2/auth.dart';
+import 'package:songapp2/components/profilebar.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -12,7 +14,21 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Profile"),
+        actions: [
+          IconButton(onPressed: () => {}, icon: const Icon(Icons.settings))
+        ],
+      ),
+      body: Column(
+        children: [
+          ProfileBar(userID: Auth().currentUser!.uid),
+          ElevatedButton(
+            onPressed: () => {Auth().signOut()},
+            child: const Text(
+              "Sign Out",
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -43,7 +43,7 @@ class _NavigationShellState extends State<NavigationShell> {
           gradient: LinearGradient(
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
-            colors: [Colors.black, Colors.black87],
+            colors: [Colors.black, Colors.transparent],
           ),
         ),
         child: BottomNavigationBar(

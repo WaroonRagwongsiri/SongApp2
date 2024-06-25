@@ -28,12 +28,11 @@ class _LoginPageState extends State<LoginPage> {
         'username': username,
         'email': email,
         'uid': uid,
-        'post': [],
         "profilePic":
             "https://firebasestorage.googleapis.com/v0/b/socialapp-a1884.appspot.com/o/placeholder%2Fblank-profile-picture-973460_1280.png?alt=media&token=6fabbf07-24b8-4e43-aa3d-de0c0d9f4eb1",
-        "bookmark": [],
-        "follower": [],
-        "following": [],
+        "playlist":[],
+        "follower":[],
+        "following":[],
       });
     } catch (e) {
       setState(() {
