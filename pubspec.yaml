@@ -40,6 +40,9 @@ dependencies:
   firebase_core: ^3.1.0
   flutter_dotenv: ^5.1.0
   cloud_firestore: ^5.0.1
+  audio_service: ^0.18.13
+  just_audio: ^0.9.38
+  flutter_riverpod: ^2.5.1
 
 dev_dependencies:
   flutter_test:

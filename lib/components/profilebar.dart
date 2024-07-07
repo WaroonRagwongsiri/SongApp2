@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:songapp2/services/profile_service.dart';
 
 class ProfileBar extends StatelessWidget {

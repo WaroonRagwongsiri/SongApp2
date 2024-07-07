@@ -14,34 +14,37 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: const Text("Home"),
+      ),
       body: Column(
         children: [
           FutureBuilder(
-              future: SongService().getAllSong(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                }
+            future: SongService().getAllSong(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              }
 
-                if (snapshot.hasError) {
-                  return const Text("Error occur");
-                }
+              if (snapshot.hasError) {
+                return const Text("Error occur");
+              }
 
-                if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Text("No song available");
-                }
+              if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return const Text("No song available");
+              }
 
-                List<DocumentReference> listSongRef = snapshot.data!;
+              List<DocumentReference> listSongRef = snapshot.data!;
 
-                return Expanded(
-                  child: ListView.builder(
-                      itemCount: listSongRef.length,
-                      itemBuilder: (context, index) {
-                        return SongTile(songRef: listSongRef[index]);
-                      }),
-                );
-              }),
+              return Expanded(
+                child: ListView.builder(
+                    itemCount: listSongRef.length,
+                    itemBuilder: (context, index) {
+                      return SongTile(songRef: listSongRef[index]);
+                    }),
+              );
+            },
+          ),
         ],
       ),
     );

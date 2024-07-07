@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:songapp2/pages/song_playing_page.dart';
 import 'package:songapp2/services/song_service.dart';
 
 class SongTile extends StatelessWidget {
@@ -23,13 +24,19 @@ class SongTile extends StatelessWidget {
             return const Center(child: Text('No posts available'));
           }
 
-          Map<String,dynamic> songData = snapshot.data!;
+          Map<String, dynamic> songData = snapshot.data!;
 
           return ListTile(
             leading: Image.network(songData["thumbnail"]),
             title: Text(songData["songName"]),
             subtitle: Text(songData["songArtist"]),
-            onTap: ()=>{},
+            onTap: () => {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                return SongPlayingPage(
+                  songId: songData['id'],
+                );
+              }))
+            },
           );
         });
   }

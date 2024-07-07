@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:songapp2/components/songplayer.dart';
 
 class NavigationShell extends StatefulWidget {
   final Widget child;
@@ -12,6 +13,15 @@ class NavigationShell extends StatefulWidget {
 
 class _NavigationShellState extends State<NavigationShell> {
   int _currentIndex = 0;
+
+  Map<String, dynamic> testSong = {
+    "id": "O0FHNTNvduu5eC1A2usr",
+    "songName": "Blue Moon Blue Ocean",
+    "songArtist": "Interlunium · Caitlin Myers",
+    "songUrl":
+        "https://firebasestorage.googleapis.com/v0/b/songapp2-45dcc.appspot.com/o/songs%2FBlue%20Moon%20Blue%20Ocean.mp3?alt=media&token=b3447d11-c45b-4f84-ac6d-0125e57f0f1e",
+    "thumbnail": "https://f4.bcbits.com/img/a3887114479_65",
+  };
 
   void onTap(index) {
     setState(() {
@@ -38,6 +48,7 @@ class _NavigationShellState extends State<NavigationShell> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: widget.child,
+      bottomSheet: SongPlayer(songData: testSong),
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
