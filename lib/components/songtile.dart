@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:songapp2/pages/song_playing_page.dart';
+import 'package:go_router/go_router.dart';
 import 'package:songapp2/services/song_service.dart';
 
 class SongTile extends StatelessWidget {
@@ -31,11 +31,8 @@ class SongTile extends StatelessWidget {
             title: Text(songData["songName"]),
             subtitle: Text(songData["songArtist"]),
             onTap: () => {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                return SongPlayingPage(
-                  songId: songData['id'],
-                );
-              }))
+              context.pushNamed('songplaying',
+                  queryParameters: {'songId': songData['id']})
             },
           );
         });

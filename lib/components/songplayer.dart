@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:songapp2/providers/song_playing_provider.dart';
-import 'package:songapp2/pages/song_playing_page.dart';
 
 class SongPlayer extends ConsumerWidget {
   const SongPlayer({super.key});
@@ -49,10 +49,9 @@ class SongPlayer extends ConsumerWidget {
             ),
           ],
         ),
-        onTap: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-            return SongPlayingPage(songId: song.id);
-          }));
+        onTap: () => {
+          context.pushNamed('songplaying',
+                  queryParameters: {'songId': song.id})
         },
       ),
     );

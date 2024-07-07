@@ -71,12 +71,13 @@ class MyApp extends ConsumerWidget {
           builder: (context, state, child) => NavigationShell(child: child),
         ),
         GoRoute(
-            path: "/songplaying",
-            name: "songplaying",
-            builder: (context, state) {
-              final songId = state.uri.queryParameters['songId']!;
-              return SongPlayingPage(songId: songId);
-            })
+          path: "/songplaying",
+          name: "songplaying",
+          builder: (context, state) {
+            final songId = state.uri.queryParameters['songId']!;
+            return SongPlayingPage(songId: songId);
+          },
+        ),
       ],
     );
 
