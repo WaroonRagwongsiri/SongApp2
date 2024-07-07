@@ -48,7 +48,7 @@ class _NavigationShellState extends State<NavigationShell> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: widget.child,
-      bottomSheet: SongPlayer(songData: testSong),
+      bottomSheet: const SongPlayer(),
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(

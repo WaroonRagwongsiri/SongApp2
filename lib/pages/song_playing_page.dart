@@ -1,30 +1,38 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:songapp2/models/song_model.dart';
+import 'package:songapp2/providers/song_playing_provider.dart';
 import 'package:songapp2/services/song_service.dart';
 
-class SongPlayingPage extends StatefulWidget {
+class SongPlayingPage extends ConsumerStatefulWidget {
   final String songId;
   const SongPlayingPage({super.key, required this.songId});
 
   @override
-  State<SongPlayingPage> createState() => _SongPlayingPageState();
+  ConsumerState<SongPlayingPage> createState() => _SongPlayingPageState();
 }
 
-class _SongPlayingPageState extends State<SongPlayingPage> {
-  Map<String, dynamic> songData = {};
+class _SongPlayingPageState extends ConsumerState<SongPlayingPage> {
   bool isLoading = true;
 
   Future<void> getSongData() async {
     try {
-      Map<String, dynamic>? data = await SongService().getSongData(
-          songRef:
-              FirebaseFirestore.instance.collection("Song").doc(widget.songId));
-      setState(() {
-        songData = data;
-        isLoading = false;
-      });
+     final Map<String, dynamic> songData = await SongService().getSongData(
+      songRef: FirebaseFirestore.instance.collection("Songs").doc(widget.songId)
+    );
+
+      ref.read(songPlayingProvider.notifier).playSong(Song(
+            id: songData['id'],
+            songName: songData['songName'],
+            songArtist: songData['songArtist'],
+            songUrl: songData['songUrl'],
+            thumbnail: songData['thumbnail'],
+          ));
+      
     } catch (e) {
       // Handle error
+    } finally {
       setState(() {
         isLoading = false;
       });
@@ -33,15 +41,25 @@ class _SongPlayingPageState extends State<SongPlayingPage> {
 
   @override
   void initState() {
-    getSongData();
     super.initState();
+    getSongData();
   }
 
   @override
   Widget build(BuildContext context) {
+    final song = ref.watch(songPlayingProvider);
+
+    if (isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    if (song == null) {
+      return const Scaffold(body: Center(child: Text('Song not found')));
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(songData['songName']),
+        title: Text(song.songName),
         centerTitle: true,
         actions: [
           IconButton(
@@ -54,7 +72,7 @@ class _SongPlayingPageState extends State<SongPlayingPage> {
           ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: Image.network(
-              songData['thumbnail'],
+              song.thumbnail,
               width: MediaQuery.of(context).size.width * 0.9,
               height: MediaQuery.of(context).size.width * 0.9,
               fit: BoxFit.scaleDown,
@@ -62,10 +80,10 @@ class _SongPlayingPageState extends State<SongPlayingPage> {
           ),
           ListTile(
             title: Text(
-              songData['songName'],
+              song.songName,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
-            subtitle: Text(songData['songArtist']),
+            subtitle: Text(song.songArtist),
             trailing: IconButton(
               onPressed: () => {},
               icon: const Icon(Icons.add_circle_outline),

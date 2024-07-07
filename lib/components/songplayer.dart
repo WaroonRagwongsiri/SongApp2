@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:songapp2/providers/song_playing_provider.dart';
 import 'package:songapp2/pages/song_playing_page.dart';
 
-class SongPlayer extends StatefulWidget {
-  final Map<String, dynamic> songData;
-  const SongPlayer({super.key, required this.songData});
+class SongPlayer extends ConsumerWidget {
+  const SongPlayer({super.key});
 
   @override
-  State<SongPlayer> createState() => _SongPlayerState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final song = ref.watch(songPlayingProvider);
 
-class _SongPlayerState extends State<SongPlayer> {
-  @override
-  Widget build(BuildContext context) {
+    if (song == null) {
+      return const SizedBox.shrink();
+    }
+
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.9,
       height: 50,
@@ -21,7 +23,7 @@ class _SongPlayerState extends State<SongPlayer> {
             ClipRRect(
               borderRadius: BorderRadius.circular(6),
               child: Image.network(
-                widget.songData['thumbnail'],
+                song.thumbnail,
                 fit: BoxFit.cover,
                 width: 50,
                 height: 50,
@@ -34,25 +36,23 @@ class _SongPlayerState extends State<SongPlayer> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    widget.songData['songName'],
+                    song.songName,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Text(widget.songData['songArtist']),
+                  Text(song.songArtist),
                 ],
               ),
             ),
             IconButton(
-              onPressed: () => {},
+              onPressed: () {},
               icon: const Icon(Icons.play_arrow),
             ),
           ],
         ),
-        onTap: () => {
+        onTap: () {
           Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-            return SongPlayingPage(
-              songId : widget.songData['id'],
-            );
-          }))
+            return SongPlayingPage(songId: song.id);
+          }));
         },
       ),
     );
