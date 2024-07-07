@@ -8,9 +8,9 @@ class SongPlayer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final song = ref.watch(songPlayingProvider);
+    final songPlaying = ref.watch(songPlayingProvider);
 
-    if (song == null) {
+    if (songPlaying == null) {
       return const SizedBox.shrink();
     }
 
@@ -23,7 +23,7 @@ class SongPlayer extends ConsumerWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(6),
               child: Image.network(
-                song.thumbnail,
+                songPlaying['playing'].thumbnail,
                 fit: BoxFit.cover,
                 width: 50,
                 height: 50,
@@ -36,10 +36,10 @@ class SongPlayer extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    song.songName,
+                    songPlaying['playing'].songName,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Text(song.songArtist),
+                  Text(songPlaying['playing'].songArtist),
                 ],
               ),
             ),
@@ -51,7 +51,7 @@ class SongPlayer extends ConsumerWidget {
         ),
         onTap: () => {
           context.pushNamed('songplaying',
-                  queryParameters: {'songId': song.id})
+                  queryParameters: {'songId': songPlaying['playing'].id})
         },
       ),
     );

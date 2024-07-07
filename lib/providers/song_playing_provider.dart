@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:songapp2/models/song_model.dart';
 
-class SongPlayingNotifier extends StateNotifier<Song?> {
+class SongPlayingNotifier extends StateNotifier<Map<String, dynamic>?> {
   SongPlayingNotifier() : super(null);
 
-  void playSong(Song song) {
-    state = song;
+  void playSong({required Song song, required List playlist}) {
+    state = {"playing": song, "playlist": playlist};
   }
 
   void stopSong() {
@@ -14,6 +14,6 @@ class SongPlayingNotifier extends StateNotifier<Song?> {
 }
 
 final songPlayingProvider =
-    StateNotifierProvider<SongPlayingNotifier, Song?>((ref) {
+    StateNotifierProvider<SongPlayingNotifier, Map<String, dynamic>?>((ref) {
   return SongPlayingNotifier();
 });

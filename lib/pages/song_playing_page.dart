@@ -18,18 +18,21 @@ class _SongPlayingPageState extends ConsumerState<SongPlayingPage> {
 
   Future<void> getSongData() async {
     try {
-     final Map<String, dynamic> songData = await SongService().getSongData(
-      songRef: FirebaseFirestore.instance.collection("Songs").doc(widget.songId)
-    );
+      final Map<String, dynamic> songData = await SongService().getSongData(
+          songRef: FirebaseFirestore.instance
+              .collection("Songs")
+              .doc(widget.songId));
 
-      ref.read(songPlayingProvider.notifier).playSong(Song(
-            id: songData['id'],
-            songName: songData['songName'],
-            songArtist: songData['songArtist'],
-            songUrl: songData['songUrl'],
-            thumbnail: songData['thumbnail'],
-          ));
-      
+      ref.read(songPlayingProvider.notifier).playSong(
+        song: Song(
+          id: songData['id'],
+          songName: songData['songName'],
+          songArtist: songData['songArtist'],
+          songUrl: songData['songUrl'],
+          thumbnail: songData['thumbnail'],
+        ),
+        playlist: [],
+      );
     } catch (e) {
       // Handle error
     } finally {
@@ -47,19 +50,19 @@ class _SongPlayingPageState extends ConsumerState<SongPlayingPage> {
 
   @override
   Widget build(BuildContext context) {
-    final song = ref.watch(songPlayingProvider);
+    final songPlaying = ref.watch(songPlayingProvider);
 
     if (isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    if (song == null) {
+    if (songPlaying == null) {
       return const Scaffold(body: Center(child: Text('Song not found')));
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(song.songName),
+        title: Text(songPlaying['playing'].songName),
         centerTitle: true,
         actions: [
           IconButton(
@@ -72,7 +75,7 @@ class _SongPlayingPageState extends ConsumerState<SongPlayingPage> {
           ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: Image.network(
-              song.thumbnail,
+              songPlaying['playing'].thumbnail,
               width: MediaQuery.of(context).size.width * 0.9,
               height: MediaQuery.of(context).size.width * 0.9,
               fit: BoxFit.scaleDown,
@@ -80,10 +83,10 @@ class _SongPlayingPageState extends ConsumerState<SongPlayingPage> {
           ),
           ListTile(
             title: Text(
-              song.songName,
+              songPlaying['playing'].songName,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
-            subtitle: Text(song.songArtist),
+            subtitle: Text(songPlaying['playing'].songArtist),
             trailing: IconButton(
               onPressed: () => {},
               icon: const Icon(Icons.add_circle_outline),
