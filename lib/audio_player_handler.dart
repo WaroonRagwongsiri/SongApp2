@@ -4,48 +4,52 @@ import 'package:just_audio/just_audio.dart';
 class AudioPlayerHandler extends BaseAudioHandler {
   final _player = AudioPlayer();
 
-  @override
   AudioPlayerHandler() {
-    // Broadcast that we're loading, and what controls are available.
-    playbackState.add(playbackState.value.copyWith(
-      controls: [MediaControl.play],
-      processingState: AudioProcessingState.loading,
-    ));
-    // Connect to the URL
-    _player.setUrl("https://exampledomain.com/song.mp3").then((_) {
-      // Broadcast that we've finished loading
-      playbackState.add(playbackState.value.copyWith(
-        processingState: AudioProcessingState.ready,
-      ));
-    });
+    _player.playbackEventStream.map(_transformEvent).pipe(playbackState);
   }
 
   @override
-  Future<void> play() async {
-    playbackState.add(playbackState.value.copyWith(
-      playing: true,
-      controls: [MediaControl.pause],
-    ));
-    await _player.play();
+  Future<void> customAction(String name, [Map<String, dynamic>? extras]) async {
+    if (name == 'setAudioSource' && extras != null && extras.containsKey('url')) {
+      await _player.setUrl(extras['url']);
+    }
   }
 
   @override
-  Future<void> pause() async {
-    playbackState.add(playbackState.value.copyWith(
-      playing: false,
-      controls: [MediaControl.play],
-    ));
-    await _player.pause();
-  }
+  Future<void> play() => _player.play();
 
   @override
-  Future<void> stop() async {
-    // Release any audio decoders back to the system
-    await _player.stop();
+  Future<void> pause() => _player.pause();
 
-    // Set the audio_service state to `idle` to deactivate the notification.
-    playbackState.add(playbackState.value.copyWith(
-      processingState: AudioProcessingState.idle,
-    ));
+  @override
+  Future<void> stop() => _player.stop();
+
+  PlaybackState _transformEvent(PlaybackEvent event) {
+    return PlaybackState(
+      controls: [
+        MediaControl.rewind,
+        if (_player.playing) MediaControl.pause else MediaControl.play,
+        MediaControl.stop,
+        MediaControl.fastForward,
+      ],
+      systemActions: const {
+        MediaAction.seek,
+        MediaAction.seekForward,
+        MediaAction.seekBackward,
+      },
+      androidCompactActionIndices: const [0, 1, 3],
+      processingState: const {
+        ProcessingState.idle: AudioProcessingState.idle,
+        ProcessingState.loading: AudioProcessingState.loading,
+        ProcessingState.buffering: AudioProcessingState.buffering,
+        ProcessingState.ready: AudioProcessingState.ready,
+        ProcessingState.completed: AudioProcessingState.completed,
+      }[_player.processingState]!,
+      playing: _player.playing,
+      updatePosition: _player.position,
+      bufferedPosition: _player.bufferedPosition,
+      speed: _player.speed,
+      queueIndex: event.currentIndex,
+    );
   }
 }

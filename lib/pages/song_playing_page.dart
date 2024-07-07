@@ -22,6 +22,16 @@ class _SongPlayingPageState extends ConsumerState<SongPlayingPage> {
           songRef: FirebaseFirestore.instance
               .collection("Songs")
               .doc(widget.songId));
+      
+      final currentPlaying = ref.watch(songPlayingProvider);
+
+      if(currentPlaying?['playing'].id == widget.songId){
+        return;
+      }
+
+      if(currentPlaying != null && currentPlaying['playing'].id != widget.songId){
+        ref.read(songPlayingProvider.notifier).stopSong();
+      }
 
       ref.read(songPlayingProvider.notifier).playSong(
         song: Song(
@@ -51,6 +61,7 @@ class _SongPlayingPageState extends ConsumerState<SongPlayingPage> {
   @override
   Widget build(BuildContext context) {
     final songPlaying = ref.watch(songPlayingProvider);
+    final songPlayingNotifier = ref.read(songPlayingProvider.notifier);
 
     if (isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));

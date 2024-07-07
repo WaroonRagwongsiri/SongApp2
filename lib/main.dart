@@ -15,14 +15,14 @@ import 'package:songapp2/pages/search_page.dart';
 import 'package:songapp2/pages/song_playing_page.dart';
 import 'firebase_options.dart';
 
-late AudioHandler _audioHandler;
+late AudioHandler audioHandler;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  _audioHandler = await AudioService.init(
+  audioHandler = await AudioService.init(
     builder: () => AudioPlayerHandler(),
     config: const AudioServiceConfig(
       androidNotificationChannelId: 'com.waroon.songapp.channel.audio',
