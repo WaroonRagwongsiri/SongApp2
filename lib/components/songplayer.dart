@@ -16,7 +16,7 @@ class SongPlayer extends ConsumerWidget {
 
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.9,
-      height: 50,
+      height: 70,
       child: InkWell(
         child: Row(
           children: [
