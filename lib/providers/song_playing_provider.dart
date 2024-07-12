@@ -8,9 +8,9 @@ class SongPlayingNotifier extends StateNotifier<Map<String, dynamic>?> {
 
   SongPlayingNotifier(this._audioHandler) : super(null);
 
-  Future<void> playSong({required Song song, required List playlist}) async {
+  Future<void> playSong({required Song song, required List queue}) async {
     try {
-      state = {"playing": song, "playlist": playlist};
+      state = {"playing": song, "queue": queue};
       await _audioHandler.customAction('setAudioSource', {'url': song.songUrl});
       await _audioHandler.play();
     } catch (e) {

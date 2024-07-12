@@ -41,7 +41,7 @@ class _SongPlayingPageState extends ConsumerState<SongPlayingPage> {
           songUrl: songData['songUrl'],
           thumbnail: songData['thumbnail'],
         ),
-        playlist: [],
+        queue: [],
       );
     } catch (e) {
       // Handle error
