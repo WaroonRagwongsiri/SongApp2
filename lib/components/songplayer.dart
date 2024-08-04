@@ -9,10 +9,13 @@ class SongPlayer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final songPlaying = ref.watch(songPlayingProvider);
+    final songPlayingNotifier = ref.read(songPlayingProvider.notifier);
 
     if (songPlaying == null) {
       return const SizedBox.shrink();
     }
+
+    final bool isPause = songPlaying["isPause"] ?? false;
 
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.9,
@@ -44,14 +47,20 @@ class SongPlayer extends ConsumerWidget {
               ),
             ),
             IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.play_arrow),
+              onPressed: () {
+                if (isPause) {
+                  songPlayingNotifier.resumeSong();
+                } else {
+                  songPlayingNotifier.pauseSong();
+                }
+              },
+              icon: Icon(isPause ? Icons.play_arrow : Icons.pause),
             ),
           ],
         ),
-        onTap: () => {
+        onTap: () {
           context.pushNamed('songplaying',
-                  queryParameters: {'songId': songPlaying['playing'].id})
+              queryParameters: {'songId': songPlaying['playing'].id});
         },
       ),
     );

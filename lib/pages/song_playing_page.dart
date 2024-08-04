@@ -23,9 +23,10 @@ class _SongPlayingPageState extends ConsumerState<SongPlayingPage> {
               .collection("Songs")
               .doc(widget.songId));
 
-      final currentPlaying = ref.watch(songPlayingProvider);
+      final currentPlaying = ref.read(songPlayingProvider);
 
-      if (currentPlaying?['playing'].id == widget.songId) {
+      if (currentPlaying != null &&
+          currentPlaying['playing'].id == widget.songId) {
         return;
       }
 
@@ -46,6 +47,7 @@ class _SongPlayingPageState extends ConsumerState<SongPlayingPage> {
       );
     } catch (e) {
       // Handle error
+      print('Error getting song data: $e');
     } finally {
       setState(() {
         isLoading = false;
@@ -63,11 +65,16 @@ class _SongPlayingPageState extends ConsumerState<SongPlayingPage> {
   Widget build(BuildContext context) {
     final songPlaying = ref.watch(songPlayingProvider);
     final songPlayingNotifier = ref.read(songPlayingProvider.notifier);
-    bool isPause = songPlaying!["isPause"];
 
     if (isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
+
+    if (songPlaying == null) {
+      return const Scaffold(body: Center(child: Text('No song playing')));
+    }
+
+    final bool isPause = songPlaying["isPause"] ?? false;
 
     return Scaffold(
       appBar: AppBar(
@@ -107,16 +114,16 @@ class _SongPlayingPageState extends ConsumerState<SongPlayingPage> {
               IconButton(onPressed: () => {}, icon: const Icon(Icons.shuffle)),
               IconButton(
                   onPressed: () => {}, icon: const Icon(Icons.skip_previous)),
-              Builder(builder: (context) {
-                if (isPause == false) {
-                  return IconButton(
-                      onPressed: () => {songPlayingNotifier.pauseSong()},
-                      icon: const Icon(Icons.pause));
-                }
-                return IconButton(
-                    onPressed: () => {songPlayingNotifier.resumeSong()},
-                    icon: const Icon(Icons.play_arrow));
-              }),
+              IconButton(
+                onPressed: () {
+                  if (isPause) {
+                    songPlayingNotifier.resumeSong();
+                  } else {
+                    songPlayingNotifier.pauseSong();
+                  }
+                },
+                icon: Icon(isPause ? Icons.play_arrow : Icons.pause),
+              ),
               IconButton(
                   onPressed: () => {}, icon: const Icon(Icons.skip_next)),
               IconButton(onPressed: () => {}, icon: const Icon(Icons.loop)),
