@@ -43,6 +43,7 @@ dependencies:
   audio_service: ^0.18.13
   just_audio: ^0.9.38
   flutter_riverpod: ^2.5.1
+  audio_video_progress_bar: ^2.0.3
 
 dev_dependencies:
   flutter_test:

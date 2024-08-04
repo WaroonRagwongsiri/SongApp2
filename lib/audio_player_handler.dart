@@ -30,6 +30,12 @@ class AudioPlayerHandler extends BaseAudioHandler {
   @override
   Future<void> stop() => _player.stop();
 
+  Stream<Duration> get positionStream => _player.positionStream;
+  Stream<Duration?> get durationStream => _player.durationStream;
+
+  @override
+  Future<void> seek(Duration position) => _player.seek(position);
+
   PlaybackState _transformEvent(PlaybackEvent event) {
     return PlaybackState(
       controls: [

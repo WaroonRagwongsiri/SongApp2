@@ -1,3 +1,4 @@
+import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -47,7 +48,6 @@ class _SongPlayingPageState extends ConsumerState<SongPlayingPage> {
       );
     } catch (e) {
       // Handle error
-      print('Error getting song data: $e');
     } finally {
       setState(() {
         isLoading = false;
@@ -106,6 +106,51 @@ class _SongPlayingPageState extends ConsumerState<SongPlayingPage> {
             trailing: IconButton(
               onPressed: () => {},
               icon: const Icon(Icons.add_circle_outline),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: StreamBuilder<Duration>(
+              stream: songPlayingNotifier.positionStream,
+              builder: (context, snapshot1) {
+                final Duration position = snapshot1.data ?? Duration.zero;
+                print("Position: $position");
+                return StreamBuilder<Duration?>(
+                  stream: songPlayingNotifier.durationStream,
+                  builder: (context, snapshot2) {
+                    final Duration? duration = snapshot2.data;
+                    print("Duration: $duration");
+                    return StreamBuilder<Duration>(
+                      stream: songPlayingNotifier.bufferedPositionStream,
+                      builder: (context, snapshot3) {
+                        final Duration bufferedPosition =
+                            snapshot3.data ?? Duration.zero;
+                        print("Buffered Position: $bufferedPosition");
+                        return SizedBox(
+                          height: 30,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: ProgressBar(
+                              progress: position,
+                              total: duration ?? Duration.zero,
+                              buffered: bufferedPosition,
+                              timeLabelPadding: -1,
+                              timeLabelTextStyle: const TextStyle(
+                                fontSize: 14,
+                              ),
+                              onSeek: duration != null
+                                  ? (duration) async {
+                                      await songPlayingNotifier.seek(duration);
+                                    }
+                                  : null,
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                );
+              },
             ),
           ),
           Row(
