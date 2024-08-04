@@ -10,7 +10,11 @@ class SongPlayingNotifier extends StateNotifier<Map<String, dynamic>?> {
 
   Future<void> playSong({required Song song, required List queue}) async {
     try {
-      state = {"playing": song, "queue": queue};
+      state = {
+        "playing": song,
+        "queue": queue,
+        "isPause": false,
+      };
       await _audioHandler.customAction('setAudioSource', {'url': song.songUrl});
       await _audioHandler.play();
     } catch (e) {
@@ -24,11 +28,15 @@ class SongPlayingNotifier extends StateNotifier<Map<String, dynamic>?> {
   }
 
   Future<void> pauseSong() async {
+    state = {...state!, "isPause": true};
     await _audioHandler.pause();
+    print(state);
   }
 
   Future<void> resumeSong() async {
+    state = {...state!, "isPause": false};
     await _audioHandler.play();
+    print(state);
   }
 }
 

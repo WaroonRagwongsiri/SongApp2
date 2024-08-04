@@ -74,7 +74,17 @@ class MyApp extends ConsumerWidget {
           path: "/songplaying",
           name: "songplaying",
           builder: (context, state) {
-            final songId = state.uri.queryParameters['songId']!;
+            final songId = state.uri.queryParameters['songId'];
+            if (songId == null) {
+              return Scaffold(
+                appBar: AppBar(
+                  title: const Text("Error"),
+                ),
+                body: const Center(
+                  child: Text("No song ID provided."),
+                ),
+              );
+            }
             return SongPlayingPage(songId: songId);
           },
         ),

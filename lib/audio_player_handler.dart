@@ -16,10 +16,16 @@ class AudioPlayerHandler extends BaseAudioHandler {
   }
 
   @override
-  Future<void> play() => _player.play();
+  Future<void> play() async {
+    await _player.play();
+    playbackState.add(playbackState.value.copyWith(playing: true));
+  }
 
   @override
-  Future<void> pause() => _player.pause();
+  Future<void> pause() async {
+    await _player.pause();
+    playbackState.add(playbackState.value.copyWith(playing: false));
+  }
 
   @override
   Future<void> stop() => _player.stop();

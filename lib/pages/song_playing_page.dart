@@ -22,14 +22,15 @@ class _SongPlayingPageState extends ConsumerState<SongPlayingPage> {
           songRef: FirebaseFirestore.instance
               .collection("Songs")
               .doc(widget.songId));
-      
+
       final currentPlaying = ref.watch(songPlayingProvider);
 
-      if(currentPlaying?['playing'].id == widget.songId){
+      if (currentPlaying?['playing'].id == widget.songId) {
         return;
       }
 
-      if(currentPlaying != null && currentPlaying['playing'].id != widget.songId){
+      if (currentPlaying != null &&
+          currentPlaying['playing'].id != widget.songId) {
         ref.read(songPlayingProvider.notifier).stopSong();
       }
 
@@ -62,13 +63,10 @@ class _SongPlayingPageState extends ConsumerState<SongPlayingPage> {
   Widget build(BuildContext context) {
     final songPlaying = ref.watch(songPlayingProvider);
     final songPlayingNotifier = ref.read(songPlayingProvider.notifier);
+    bool isPause = songPlaying!["isPause"];
 
     if (isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-
-    if (songPlaying == null) {
-      return const Scaffold(body: Center(child: Text('Song not found')));
     }
 
     return Scaffold(
@@ -109,8 +107,16 @@ class _SongPlayingPageState extends ConsumerState<SongPlayingPage> {
               IconButton(onPressed: () => {}, icon: const Icon(Icons.shuffle)),
               IconButton(
                   onPressed: () => {}, icon: const Icon(Icons.skip_previous)),
-              IconButton(
-                  onPressed: () => {}, icon: const Icon(Icons.play_arrow)),
+              Builder(builder: (context) {
+                if (isPause == false) {
+                  return IconButton(
+                      onPressed: () => {songPlayingNotifier.pauseSong()},
+                      icon: const Icon(Icons.pause));
+                }
+                return IconButton(
+                    onPressed: () => {songPlayingNotifier.resumeSong()},
+                    icon: const Icon(Icons.play_arrow));
+              }),
               IconButton(
                   onPressed: () => {}, icon: const Icon(Icons.skip_next)),
               IconButton(onPressed: () => {}, icon: const Icon(Icons.loop)),
