@@ -17,26 +17,37 @@ class SongPlayingPage extends ConsumerStatefulWidget {
 class _SongPlayingPageState extends ConsumerState<SongPlayingPage> {
   bool isLoading = true;
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getSongData();
+    });
+  }
+
   Future<void> getSongData() async {
     try {
+      final currentPlaying = ref.read(songPlayingProvider);
+
+      if (currentPlaying != null &&
+          currentPlaying['playing'].id == widget.songId) {
+        setState(() {
+          isLoading = false;
+        });
+        return;
+      }
+
       final Map<String, dynamic> songData = await SongService().getSongData(
           songRef: FirebaseFirestore.instance
               .collection("Songs")
               .doc(widget.songId));
 
-      final currentPlaying = ref.read(songPlayingProvider);
-
-      if (currentPlaying != null &&
-          currentPlaying['playing'].id == widget.songId) {
-        return;
-      }
-
       if (currentPlaying != null &&
           currentPlaying['playing'].id != widget.songId) {
-        ref.read(songPlayingProvider.notifier).stopSong();
+        await ref.read(songPlayingProvider.notifier).stopSong();
       }
 
-      ref.read(songPlayingProvider.notifier).playSong(
+      await ref.read(songPlayingProvider.notifier).playSong(
         song: Song(
           id: songData['id'],
           songName: songData['songName'],
@@ -53,12 +64,6 @@ class _SongPlayingPageState extends ConsumerState<SongPlayingPage> {
         isLoading = false;
       });
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getSongData();
   }
 
   @override
@@ -112,39 +117,26 @@ class _SongPlayingPageState extends ConsumerState<SongPlayingPage> {
             padding: const EdgeInsets.all(8),
             child: StreamBuilder<Duration>(
               stream: songPlayingNotifier.positionStream,
-              builder: (context, snapshot1) {
-                final Duration position = snapshot1.data ?? Duration.zero;
-                print("Position: $position");
+              builder: (context, positionSnapshot) {
+                final position = positionSnapshot.data ?? Duration.zero;
                 return StreamBuilder<Duration?>(
                   stream: songPlayingNotifier.durationStream,
-                  builder: (context, snapshot2) {
-                    final Duration? duration = snapshot2.data;
-                    print("Duration: $duration");
+                  builder: (context, durationSnapshot) {
+                    final duration = durationSnapshot.data ?? Duration.zero;
                     return StreamBuilder<Duration>(
                       stream: songPlayingNotifier.bufferedPositionStream,
-                      builder: (context, snapshot3) {
-                        final Duration bufferedPosition =
-                            snapshot3.data ?? Duration.zero;
-                        print("Buffered Position: $bufferedPosition");
-                        return SizedBox(
-                          height: 30,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: ProgressBar(
-                              progress: position,
-                              total: duration ?? Duration.zero,
-                              buffered: bufferedPosition,
-                              timeLabelPadding: -1,
-                              timeLabelTextStyle: const TextStyle(
-                                fontSize: 14,
-                              ),
-                              onSeek: duration != null
-                                  ? (duration) async {
-                                      await songPlayingNotifier.seek(duration);
-                                    }
-                                  : null,
-                            ),
-                          ),
+                      builder: (context, bufferedPositionSnapshot) {
+                        final bufferedPosition =
+                            bufferedPositionSnapshot.data ?? Duration.zero;
+                        return ProgressBar(
+                          progress: position,
+                          total: duration,
+                          buffered: bufferedPosition,
+                          onSeek: (duration) {
+                            songPlayingNotifier.seek(duration);
+                          },
+                          timeLabelPadding: -1,
+                          timeLabelTextStyle: const TextStyle(fontSize: 14),
                         );
                       },
                     );

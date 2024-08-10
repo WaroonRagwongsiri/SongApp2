@@ -5,6 +5,7 @@ import 'package:songapp2/models/song_model.dart';
 
 class SongPlayingNotifier extends StateNotifier<Map<String, dynamic>?> {
   final AudioHandler _audioHandler;
+  Duration? _duration;
 
   SongPlayingNotifier(this._audioHandler) : super(null);
 
@@ -15,6 +16,7 @@ class SongPlayingNotifier extends StateNotifier<Map<String, dynamic>?> {
         "queue": queue,
         "isPause": false,
       };
+      _duration = null;
       await _audioHandler.customAction('setAudioSource', {'url': song.songUrl});
       await _audioHandler.play();
     } catch (e) {
@@ -37,26 +39,23 @@ class SongPlayingNotifier extends StateNotifier<Map<String, dynamic>?> {
     await _audioHandler.play();
   }
 
-  Stream<Duration> get positionStream {
-    return _audioHandler.playbackState.map((state) {
-      print("Position Stream: ${state.position}");
-      return state.position;
-    }).distinct();
-  }
+  Stream<Duration> get positionStream => _audioHandler.playbackState
+      .map((state) => state.position)
+      .distinct();
 
   Stream<Duration?> get durationStream {
-    return _audioHandler.mediaItem.map((item) {
-      print("Duration Stream: ${item?.duration}");
-      return item?.duration;
-    }).distinct();
+    return Stream.fromFuture(Future.delayed(Duration.zero, () => _duration))
+        .takeWhile((_) => state != null)
+        .asyncMap((_) async {
+      _duration ??= await _audioHandler.mediaItem.map((item) => item?.duration).first;
+      return _duration;
+    });
   }
 
-  Stream<Duration> get bufferedPositionStream {
-    return _audioHandler.playbackState.map((state) {
-      print("Buffered Position Stream: ${state.bufferedPosition}");
-      return state.bufferedPosition;
-    }).distinct();
-  }
+  Stream<Duration> get bufferedPositionStream =>
+      _audioHandler.playbackState
+          .map((state) => state.bufferedPosition)
+          .distinct();
 
   Future<void> seek(Duration position) async {
     await _audioHandler.seek(position);

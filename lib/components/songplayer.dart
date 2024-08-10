@@ -43,6 +43,23 @@ class SongPlayer extends ConsumerWidget {
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Text(songPlaying['playing'].songArtist),
+                  StreamBuilder<Duration>(
+                    stream: songPlayingNotifier.positionStream,
+                    builder: (context, snapshot) {
+                      final position = snapshot.data ?? Duration.zero;
+                      return StreamBuilder<Duration?>(
+                        stream: songPlayingNotifier.durationStream,
+                        builder: (context, snapshot) {
+                          final duration = snapshot.data ?? Duration.zero;
+                          return LinearProgressIndicator(
+                            value: duration.inSeconds > 0
+                                ? position.inSeconds / duration.inSeconds
+                                : 0,
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
