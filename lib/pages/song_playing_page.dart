@@ -59,21 +59,16 @@ class _SongPlayingPageState extends ConsumerState<SongPlayingPage> {
       );
     } catch (e) {
       // Handle error
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final songPlaying = ref.watch(songPlayingProvider);
     final songPlayingNotifier = ref.read(songPlayingProvider.notifier);
-
-    if (isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
 
     if (songPlaying == null) {
       return const Scaffold(body: Center(child: Text('No song playing')));
