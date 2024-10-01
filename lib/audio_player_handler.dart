@@ -41,7 +41,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
         extras.containsKey('url')) {
       try {
         await _player.setUrl(extras['url']);
-        final duration = await _player.duration;
+        final duration = _player.duration;
         print("Audio source set successfully. Duration: $duration");
         await updateMedia(extras['url'], duration);
       } catch (e) {
